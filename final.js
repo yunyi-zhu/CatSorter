@@ -4,7 +4,7 @@ var w;
 var h;
 var buttons;
 var catnames;
-catnames= ['AustralianMist', 'AmericanShorthair', 'OjosAzules', 'Ragamuffin', 'MaineCoon', 'Highlander', 'ScottishFold', 'Chantilly', 'SelkirkRex', 'Siberian', 'Bengal', 'Donskoy', 'OrientalShorthair', 'NorwegianForest', 'Somali', 'CaliforniaSpangled', 'JapaneseBobtail', 'EgyptianMau', 'Himalayan', 'Laperm', 'Balinese', 'AmericanBobtail', 'CornishRex', 'Sokoke', 'EuropeanBurmese', 'Peterbald', 'Ragdoll', 'DevonRex', 'HavanaBrown', 'BritishShorthair', 'Serengeti', 'GermanRex', 'Snowshoe', 'Cymric', 'TurkishAngora', 'EuropeanShorthair', 'Chartreux', 'Singapura', 'AmericanWirehair', 'Toyger', 'Tonkinese', 'Manx', 'KurilianBobtail', 'TurkishVan', 'Nebelung', 'Burmese', 'YorkChocolate', 'RussianBlue', 'Abyssinian', 'Korats', 'Tiffanie', 'Birman', 'SiameseTraditional', 'ChineseLiHuaMao', 'OrientalLonghair', 'ExoticShorthair', 'Javanese', 'ColorpointShorthair', 'Savannah', 'Pixie-Bob', 'Chausie', 'BritishLonghair', 'Munchkin', 'Burmilla', 'Ocicat', 'Minskin', 'Persian', 'Sphynx', 'SiameseModern', 'Bombay', 'AmericanCurl']
+catnames= ['AustralianMist', 'AmericanShorthair', 'OjosAzules', 'Ragamuffin', 'MaineCoon', 'Highlander', 'ScottishFold', 'Chantilly', 'SelkirkRex', 'Siberian', 'Bengal', 'Donskoy', 'OrientalShorthair', 'NorwegianForest', 'Somali', 'CaliforniaSpangled', 'JapaneseBobtail', 'EgyptianMau', 'Himalayan', 'Laperm', 'Balinese', 'AmericanBobtail', 'CornishRex', 'Sokoke', 'EuropeanBurmese', 'Peterbald', 'Ragdoll', 'DevonRex', 'HavanaBrown', 'BritishShorthair', 'Serengeti', 'GermanRex', 'Snowshoe', 'Cymric', 'TurkishAngora', 'EuropeanShorthair', 'Chartreux', 'Singapura', 'AmericanWirehair', 'Toyger', 'Tonkinese', 'Manx', 'KurilianBobtail', 'TurkishVan', 'Nebelung', 'Burmese', 'YorkChocolate', 'RussianBlue', 'Abyssinian', 'Korats', 'Tiffanie', 'Birman', 'SiameseTraditional', 'ChineseLiHuaMao', 'OrientalLonghair', 'ExoticShorthair', 'Javanese', 'ColorpointShorthair', 'Savannah', 'PixieBob', 'Chausie', 'BritishLonghair', 'Munchkin', 'Burmilla', 'Ocicat', 'Minskin', 'Persian', 'Sphynx', 'SiameseModern', 'Bombay', 'AmericanCurl']
 //catnames = ['Abyssinian','AmericanBobtail','AmericanCurl','AmericanShorthair','AmericanWirehair','AustralianMist','Balinese']
 
 var cats = []
@@ -13,27 +13,31 @@ var detailcat = "None"
 var sidebarWidth = new SoftFloat(0,0.2,1.5)
 var startingpoint
 var canvasHeight
+var lato
+var lightItalic
 
 
 function preload(){
   table = loadJSON("data.json")
   catnames.forEach(function(catname){
     pics[catname] = loadImage("pic/"+catname+".jpg")
-  })
- 
-  
+  }) 
+  lato = loadFont("Lato-Regular.ttf")
+  lightItalic = loadFont("Lato-LightItalic.ttf")
+  light = loadFont("Lato-Light.ttf")
 }
 
 
 function setup() {
+  frameRate(125)
   createCanvas(windowWidth,4.75*windowHeight)
   noStroke();
   w = windowWidth/100
   h = windowHeight/100;
   canvasHeight = 4.75*windowHeight
-  lato = loadFont("Lato-Regular.ttf")
-  input = createInput();
-  input.position(80*w,5*h);
+  
+  //input = createInput();
+  //input.position(80*w,5*h);
   buttons = {"size":[new Button(11*w,5*h,"all"),new Button(5*w,10*h,"small"),new Button(11*w,10*h,"medium"),
   new Button(17*w,10*h,"large")], "hair length": [new Button(11*w,15*h,"all"),new Button(5*w,20*h,"short"),
   new Button(11*w,20*h,"medium"), new Button(17*w,20*h,"long")], "shedding":[new Button(11*w,25*h,"all"),
@@ -45,9 +49,11 @@ function setup() {
   new Button(17*w,55*h,"independent")]}
   
   sidebarWidth.setTarget(22*w)
-  catnames.forEach(function(catname){
-  cats.push(new Cat(catname))
-  })
+  for (var i=0;i<catnames.length;i++){
+  catname = catnames[i];
+  cats.push(new Cat(catname,i))
+  }
+
   
 }
 
@@ -60,7 +66,6 @@ function draw() {
   fill(80);
   layout();
   drawCat();
-  
 }
 
 
@@ -82,7 +87,6 @@ function layout(){
 }
 
 function checkSidebar(){
-  console.log(startingpoint)
 if (startingpoint !=0)
 return false
 else
@@ -94,10 +98,10 @@ function drawSidebar(){
 fill(250);
 rect(0,0,sidebarWidth.value,height);
 fill(50)
-text("size",5*w,5*h)
-text("hair length",5*w,15*h)
-text("shedding",5*w,25*h)
-text("temper",5*w,35*h)
+text("size",sidebarWidth.value-17*w,5*h)
+text("hair length",sidebarWidth.value-17*w,15*h)
+text("shedding",sidebarWidth.value-17*w,25*h)
+text("temper",sidebarWidth.value-17*w,35*h)
 }
 
 
@@ -114,22 +118,25 @@ function drawCat(){
  if(detailcat!="None"){
  detailcat.showDetails()
  }else{
-   var i=0
+ var i=0
  tempcats = sortCat()
  tempcats.forEach(function(cat){
  cat.setXY(i)
  cat.show()
  i++
  })
- var hei = map(floor(tempcats.length/4),0,3,25*h,100*h)+25*h
- var prospectHeight = max([windowHeight,hei])
- console.log(prospectHeight,canvasHeight)
- if (prospectHeight-canvasHeight>25*h||prospectHeight-canvasHeight<-25*h){
-   "in the loop"
- canvasHeight = prospectHeight
- resizeCanvas(windowWidth,prospectHeight)
  
- }
+ 
+ // This resizeCanvas function is too slow. How to fix this?
+ 
+ //var hei = map(floor(tempcats.length/4),0,3,25*h,100*h)+25*h
+ //var prospectHeight = max([windowHeight,hei])
+ //if (prospectHeight-canvasHeight>25*h||prospectHeight-canvasHeight<-25*h){
+ //  "in the loop"
+ //canvasHeight = prospectHeight
+ //resizeCanvas(windowWidth,prospectHeight)
+ 
+ //}
  }
 }
 
@@ -162,44 +169,38 @@ var inp = input.value()
 
 function mouseClicked(){
  toggleButtons()
-   cats.forEach(function(cat){
+ toggleCat()
+ 
+
+}
+
+function toggleCat(){
+ if (detailcat!="None"){
+ detailcat = "None"
+ }else{
+  tempcats.every(function(cat,index){
   if (cat.hovered()){
- if(cat==detailcat)
-   detailcat = "None"
-  else{
+    cat.updateLoc()
     detailcat = cat
-    cat.updateLoc()  
-}
-  }
+    return false
+  }else{
+  return true}
   })
+ }
 }
 
-function mousePressed(){
-  cats.forEach(function(cat){
-  if (cat.hovered()){
-  cat.bound.setTarget(190)
-  }
-  })
-}
-
-function mouseReleased(){
-  cats.forEach(function(cat){
-  if (cat.hovered()){
-  cat.bound.setTarget(220)
-  }
-  })
-}
 
 function mouseMoved(){
-  cats.forEach(function(cat){
+  cats.every(function(cat,index){
   if (cat.hovered()){
   cat.expand()
+  return false
   }
   else{
   cat.normal()
+  return true
   }
   })
-
 }
 
 
@@ -236,3 +237,34 @@ for (var category in buttons){
    continue
  }
 }}
+
+
+//Obsolete
+
+
+
+//function mousePressed(){
+//  if (detailCat=="None"){
+//  cats.every(function(cat,index){
+//  if (cat.hovered()){
+//  cat.bound.setTarget(10)
+//  return true
+//  }
+//  else
+//  return false
+//  })
+//  }
+//}
+
+//function mouseReleased(){
+//  if (detailCat=="None"){
+//  cats.every(function(cat,index){
+//  if (cat.hovered()){
+//  cat.bound.setTarget(220)
+//  return true
+//  }
+//  else
+//  return false
+//  })
+//  }
+//}

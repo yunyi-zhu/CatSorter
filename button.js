@@ -24,6 +24,7 @@ function Button(inX,inY,word){
     text(this.word,this.x,this.y);
     }
   }
+
   
   this.hovered = function(){
     if(mouseX-this.x<2.5*w && mouseX-this.x>-2.5*w && mouseY-this.y<1.2*w && mouseY-this.y>-0.8*w)
