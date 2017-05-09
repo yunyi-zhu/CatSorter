@@ -1,4 +1,4 @@
-function Button(inX,inY,word){
+function Button(inX,inY,inWidth,word){
   this.x = inX
   this.y = inY
   if (word == "all")
@@ -6,28 +6,32 @@ function Button(inX,inY,word){
   else
   this.on = false
   this.word = word
+  this.w = inWidth
+  this.h = 2.0*h
   
   
   this.show = function(){
+    sidebarWidth.update()
+    textSize(1.4*h)
+    textFont(regular)
+    textAlign(CENTER,BOTTOM)
+    if(sidebarWidth.value==sidebarTarget){
     if(this.on){
-      fill(128)
-    rect(this.x-2.5*w,this.y-0.8*w,5*w,2*w)
+    fill(128)
+    rect(this.x,this.y,this.w,this.h)
     fill(255)
-    textAlign(CENTER,CENTER)
-    text(this.word,this.x,this.y);
+    text(this.word[0].toUpperCase()+this.word.slice(1),this.x+this.w/2,this.y+this.h-0.15*h);
     }
     else{
     fill(225)
-    rect(this.x-2.5*w,this.y-0.8*w,5*w,2*w)
-    fill(80)
-    textAlign(CENTER,CENTER)
-    text(this.word,this.x,this.y);
-    }
-  }
-
+    rect(this.x,this.y,this.w,this.h)
+    fill(30)
+    text(this.word[0].toUpperCase()+this.word.slice(1),this.x+this.w/2,this.y+this.h-0.15*h);
+    }}
+}
   
   this.hovered = function(){
-    if(mouseX-this.x<2.5*w && mouseX-this.x>-2.5*w && mouseY-this.y<1.2*w && mouseY-this.y>-0.8*w)
+    if(mouseX>this.x && mouseX<this.x+this.w && mouseY>this.y && mouseY<this.y+this.h)
   return true
   else
   return false

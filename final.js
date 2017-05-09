@@ -1,3 +1,7 @@
+
+
+
+
 var input;
 var table;
 var w;
@@ -11,20 +15,26 @@ var cats = []
 var pics = {}
 var detailcat = "None"
 var sidebarWidth = new SoftFloat(0,0.2,1.5)
+var sidebarTarget
 var startingpoint
 var canvasHeight
-var lato
+var light
 var lightItalic
+var regular
+var sidebarText
+
 
 
 function preload(){
   table = loadJSON("data.json")
   catnames.forEach(function(catname){
-    pics[catname] = loadImage("pic/"+catname+".jpg")
+  pics[catname] = loadImage("pic/"+catname+".jpg")
   }) 
-  lato = loadFont("Lato-Regular.ttf")
-  lightItalic = loadFont("Lato-LightItalic.ttf")
-  light = loadFont("Lato-Light.ttf")
+  bold = loadFont("fonts/Roboto-Bold.ttf")
+  light = loadFont("fonts/Roboto-Light.ttf")
+  regular = loadFont("fonts/Roboto-Medium.ttf")
+  lightItalic = loadFont("fonts/Roboto-Lightitalic.ttf")
+
 }
 
 
@@ -35,20 +45,31 @@ function setup() {
   w = windowWidth/100
   h = windowHeight/100;
   canvasHeight = 4.75*windowHeight
+  sidebarTarget = 20*w
   
-  //input = createInput();
-  //input.position(80*w,5*h);
-  buttons = {"size":[new Button(11*w,5*h,"all"),new Button(5*w,10*h,"small"),new Button(11*w,10*h,"medium"),
-  new Button(17*w,10*h,"large")], "hair length": [new Button(11*w,15*h,"all"),new Button(5*w,20*h,"short"),
-  new Button(11*w,20*h,"medium"), new Button(17*w,20*h,"long")], "shedding":[new Button(11*w,25*h,"all"),
-  new Button(5*w,30*h,"minimal"), new Button(11*w,30*h,"seasonal"), new Button(17*w,30*h,"constant")],"Temperament":
- [new Button(11*w,35*h,"all"), new Button(5*w,40*h,"affectionate"), new Button(11*w,40*h,"active"),
-  new Button(17*w,40*h,"intelligent"), new Button(5*w, 45*h, "loyal"), new Button(11*w,45*h,"social"),
-  new Button(17*w,45*h,"docile"), new Button(5*w,50*h,"gentle"), new Button(11*w,50*h,"playful"), 
-  new Button(17*w,50*h,"sweet"), new Button(5*w,55*h,"strong"), new Button(11*w, 55*h,"outgoing"),
-  new Button(17*w,55*h,"independent")]}
-  
-  sidebarWidth.setTarget(22*w)
+  input = createInput();
+  input.position(80*w,4*h);
+
+  var startHeight = 24*h
+  var buttonFullLength = 16*w
+  var gapWidth = 0.3*w
+  var startWidth = 2*w
+  buttons = {
+  "size":[new Button(startWidth,startHeight+5*h,buttonFullLength-gapWidth,"all"),new Button(startWidth,startHeight+8*h,buttonFullLength/3-gapWidth,"small"),new Button(startWidth+buttonFullLength/3,startHeight+8*h,buttonFullLength/3-gapWidth,"medium"),new Button(startWidth+2*buttonFullLength/3,startHeight+8*h,buttonFullLength/3-gapWidth,"large")],
+  "hair length": [new Button(startWidth,startHeight+14*h,buttonFullLength-gapWidth,"all"),new Button(startWidth,startHeight+17*h,buttonFullLength/3-gapWidth,"short"),new Button(startWidth+buttonFullLength/3,startHeight+17*h,buttonFullLength/3-gapWidth,"medium"),new Button(startWidth+2*buttonFullLength/3,startHeight+17*h,buttonFullLength/3-gapWidth,"long")],
+  "shedding": [new Button(startWidth,startHeight+23*h,buttonFullLength-gapWidth,"all"),new Button(startWidth,startHeight+26*h,buttonFullLength/3-gapWidth,"minimal"),new Button(startWidth+buttonFullLength/3,startHeight+26*h,buttonFullLength/3-gapWidth,"seasonal"),new Button(startWidth+2*buttonFullLength/3,startHeight+26*h,buttonFullLength/3-gapWidth,"constant")],
+  "Temperament": [new Button(startWidth,startHeight+32*h,buttonFullLength-gapWidth,"all"),new Button(startWidth,startHeight+35*h,buttonFullLength/2-gapWidth,"affectionate"),new Button(startWidth+buttonFullLength/2,startHeight+35*h,buttonFullLength/2-gapWidth,"active"),
+  new Button(startWidth,startHeight+38*h,buttonFullLength/2-gapWidth,"intelligent"),new Button(startWidth+buttonFullLength/2,startHeight+38*h,buttonFullLength/2-gapWidth,"loyal"),
+  new Button(startWidth,startHeight+41*h,buttonFullLength/2-gapWidth,"social"),new Button(startWidth+buttonFullLength/2,startHeight+41*h,buttonFullLength/2-gapWidth,"docile"),
+  new Button(startWidth,startHeight+44*h,buttonFullLength/2-gapWidth,"gentle"),new Button(startWidth+buttonFullLength/2,startHeight+44*h,buttonFullLength/2-gapWidth,"playful"),
+  new Button(startWidth,startHeight+47*h,buttonFullLength/2-gapWidth,"sweet"),new Button(startWidth+buttonFullLength/2,startHeight+47*h,buttonFullLength/2-gapWidth,"strong"),
+  new Button(startWidth,startHeight+50*h,buttonFullLength/2-gapWidth,"outgoing"),new Button(startWidth+buttonFullLength/2,startHeight+50*h,buttonFullLength/2-gapWidth,"independent")
+  ]
+}
+
+sidebarText = [["Size: ",startWidth,startHeight+5*h],["Hair Length: ",startWidth,startHeight+14*h],["Shedding: ",startWidth,startHeight+23*h],["Temper: ",startWidth,startHeight+32*h]]
+
+  sidebarWidth.setTarget(sidebarTarget)
   for (var i=0;i<catnames.length;i++){
   catname = catnames[i];
   cats.push(new Cat(catname,i))
@@ -59,13 +80,14 @@ function setup() {
 
 function draw() {
   startingpoint = $(window).scrollTop()
-  textFont(lato)
+  textFont(light)
   background(240);
-  textSize(16);
+  textSize(2*h);
 
   fill(80);
   layout();
   drawCat();
+
 }
 
 
@@ -74,16 +96,13 @@ function draw() {
 
 function layout(){
   if (checkSidebar()){
-  sidebarWidth.setTarget(22*w)
+  sidebarWidth.setTarget(sidebarTarget)
     drawSidebar();
     drawButtons();
   }else{
     drawSidebar();
     sidebarWidth.setTarget(0) 
   }
-  
-
- 
 }
 
 function checkSidebar(){
@@ -94,14 +113,24 @@ return true
 }
 
 function drawSidebar(){
-  sidebarWidth.update()
+sidebarWidth.update()
 fill(250);
 rect(0,0,sidebarWidth.value,height);
+if(sidebarWidth.value==sidebarTarget){
+writeSidebarText()
+drawHeadline()
+}
+
+
+}
+
+function writeSidebarText(){
 fill(50)
-text("size",sidebarWidth.value-17*w,5*h)
-text("hair length",sidebarWidth.value-17*w,15*h)
-text("shedding",sidebarWidth.value-17*w,25*h)
-text("temper",sidebarWidth.value-17*w,35*h)
+textAlign(LEFT,BOTTOM)
+textSize(1.7*h)
+sidebarText.forEach(function(textInfo){
+  text(textInfo[0],textInfo[1],textInfo[2])
+})
 }
 
 
@@ -117,7 +146,19 @@ function drawButtons(){
 function drawCat(){
  if(detailcat!="None"){
  detailcat.showDetails()
+ input.position(111*w,2*h);
  }else{
+  input.position(82.3*w,4*h);
+
+  // Search Bar text
+  textFont(light)
+  textSize(1.7*h)
+  fill(50)
+  textAlign(RIGHT,TOP)
+  readytext = "Search Cat Name "
+  text(readytext,82*w,4*h)
+
+
  var i=0
  tempcats = sortCat()
  tempcats.forEach(function(cat){
@@ -125,8 +166,7 @@ function drawCat(){
  cat.show()
  i++
  })
- 
- 
+
  // This resizeCanvas function is too slow. How to fix this?
  
  //var hei = map(floor(tempcats.length/4),0,3,25*h,100*h)+25*h
@@ -140,9 +180,28 @@ function drawCat(){
  }
 }
 
+
+function drawHeadline(){
+  textFont(bold)
+  fill(255,144,7)
+  textSize(3*h)
+  textAlign(LEFT,BOTTOM)
+  text("Cat",2*w,10*h)
+  fill(90)
+  text("ology",5.4*w,10*h)
+
+  textFont(light)
+  textSize(1.45*h)
+  fill(50)
+  readytext = "Catology is what anyone who owns a cat is doomed to practice for the rest of their pet's natrual life. Little do most cat owners realize that they are being pulled into this dangerous cult of cats."
+  text(readytext,2.1*w,13*h,15*w)
+
+}
+
 function sortCat(){
-  subcats = cats
+  subcats = search();
   for(var category in buttons){
+    if (category!="Temperament"){
     catcopy = []
     subButtons = buttons[category]
     subButtons.forEach(function(button){
@@ -158,13 +217,59 @@ function sortCat(){
     })
     if(!buttons[category][0].on)
     subcats = catcopy
+  }else{
+    subButtons = buttons[category].slice(1)
+    subButtons.forEach(function(button){
+      if(button.on){
+        catcopy = []
+        subcats.forEach(function(cat){
+          if(cat.data[category].indexOf(button.word)>=0)
+            catcopy.push(cat)
+        })
+        subcats=catcopy
+      }
+    })
   }
+
+
+
+  }
+
+
+
   return subcats
 }
 
+function subsequence(long,short){
+  var index = long.indexOf(short[0])
+  if (short.length==0)
+    return true
+  if (index!=-1){
+    return subsequence(long.slice(index),short.slice(1))
+  }else{
+  return false
+  }
+}
 
 function search(){
-var inp = input.value()
+var inp = input.value().split(' ').join('').toLowerCase()
+if(inp != ""){
+  output = []
+  cats.forEach(function(cat){
+    if(subsequence(cat.name.toLowerCase(),inp)){
+      output.push(cat)
+    }else if ("Alternate names" in cat.data){
+      names = cat.data["Alternate names"].join(" ").toLowerCase()
+      if (subsequence(names,inp)){
+        output.push(cat)
+      }
+
+    }
+  })
+  return output
+
+}
+return cats
 }
 
 function mouseClicked(){
@@ -240,8 +345,6 @@ for (var category in buttons){
 
 
 //Obsolete
-
-
 
 //function mousePressed(){
 //  if (detailCat=="None"){

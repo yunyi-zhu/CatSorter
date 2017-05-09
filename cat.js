@@ -1,5 +1,5 @@
 function Cat(catname,i){
-  this.x = new SoftFloat(map(i%4,0,4,17*w+0.8*sidebarWidth.value,105*w));
+  this.x = new SoftFloat(map(i%4,0,4,17*w+0.8*18*w,105*w)); //sidebarWidth
   this.y = new SoftFloat(map(floor(i/4),0,3,25*h,100*h));
   this.selected = true;
   this.name = catname;
@@ -13,13 +13,14 @@ function Cat(catname,i){
     this.bound.update();
     fill(50);
     textAlign(CENTER,CENTER)
+    textSize(2*h)
     text(this.name.replace(/([A-Z])/g, ' $1').trim(),this.x.value,this.y.value+0.46*this.bound.value+19)
     image(this.pic,this.x.value-0.5*this.bound.value,this.y.value-0.5*this.bound.value,this.bound.value,this.bound.value)
   };
   
   this.setXY = function(pos){
-    var targetX = map(pos%4,0,4,17*w+0.8*sidebarWidth.value,105*w)
-    var targetY = map(floor(pos/4),0,3,25*h,100*h)
+    var targetX = map(pos%4,0,4,17*w+0.8*18*w,105*w)//sidebarWidth
+    var targetY = map(floor(pos/4),0,3,20*h,95*h)
     this.x.setTarget(targetX)
     this.y.setTarget(targetY)
 }
@@ -78,7 +79,7 @@ topAlign = yy + 0.22*hh}
   
   //facts
 
-  textFont(lato)
+  textFont(light)
   fill(50)
   var leftAlign = xx + 0.115*ww + 0.4*hh;
   var rowWidth = 0.04*hh;
