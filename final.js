@@ -32,7 +32,7 @@ function preload(){
   }) 
   bold = loadFont("fonts/Roboto-Bold.ttf")
   light = loadFont("fonts/Roboto-Light.ttf")
-  regular = loadFont("fonts/Roboto-Medium.ttf")
+  regular = loadFont("fonts/Roboto-Regular.ttf")
   lightItalic = loadFont("fonts/Roboto-Lightitalic.ttf")
 
 }
@@ -126,10 +126,11 @@ drawHeadline()
 
 function writeSidebarText(){
 fill(50)
+textFont(regular)
 textAlign(LEFT,BOTTOM)
-textSize(1.7*h)
+textSize(1.5*h)
 sidebarText.forEach(function(textInfo){
-  text(textInfo[0],textInfo[1],textInfo[2])
+  text(textInfo[0],textInfo[1],textInfo[2]-0.1*h)
 })
 }
 
@@ -188,7 +189,7 @@ function drawHeadline(){
   textAlign(LEFT,BOTTOM)
   text("Cat",2*w,10*h)
   fill(90)
-  text("ology",5.4*w,10*h)
+  text("ology",2*w+4.6*h,10*h)
 
   textFont(light)
   textSize(1.45*h)
@@ -299,7 +300,7 @@ function mouseMoved(){
   cats.every(function(cat,index){
   if (cat.hovered()){
   cat.expand()
-  return false
+  return true
   }
   else{
   cat.normal()

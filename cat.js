@@ -33,6 +33,15 @@ function Cat(catname,i){
   }
   
 
+
+
+
+
+
+
+// DETAIL CAT INFO LISTED HERE
+
+
   this.dtHorizontal = new SoftFloat(170,0.25,1.5)
   this.dtVertical = new SoftFloat(170,0.25,1.5)
   this.dtX = new SoftFloat(0,0.25,1.5)
@@ -53,16 +62,19 @@ function Cat(catname,i){
   var xx = this.dtX.value;
   var yy = this.dtY.value
   var tpw=20 
+  var leftAlign = xx+0.12*ww+0.4*hh
   //image
   image(this.pic,xx+0.07*ww,yy+0.07*hh,0.4*hh,0.4*hh);
-  //name
-  textSize(0.07*hh)
-  text(this.name.replace(/([A-Z])/g, ' $1').trim(),xx+0.4*hh+0.1*ww,yy+0.1*hh)
+  //cat name
+  //be aware that ww and hh are real width and heights, not percentage
+  textFont(light)
+  textSize(0.06*hh)
+  text(this.name.replace(/([A-Z])/g, ' $1').trim(),leftAlign,yy+0.1*hh)
   
   //othername
-  textSize(0.025*hh)
+  textSize(0.022*hh)
+  textFont(lightItalic)
   if("Alternate names" in this.data){
-
   var readytext = ""
   this.data["Alternate names"].forEach(function(name){
     readytext = concat(readytext,name)
@@ -70,19 +82,19 @@ function Cat(catname,i){
   })
     readytext = readytext.slice(0,-2);
     fill(128)
-    textFont(lightItalic)
-    text(concat("Also Called: ", readytext), xx + 0.115*ww + 0.4*hh, yy + 0.2*hh)
-    topAlign = yy + 0.25*hh
+    text(concat("Also Called: ", readytext),leftAlign, yy + 0.19*hh,0.8*ww)
+    topAlign = yy + 0.22*hh
 }
 else{
+text("Facts: ",leftAlign,yy+0.19*hh,0.8*ww)
+
 topAlign = yy + 0.22*hh}
   
   //facts
 
-  textFont(light)
+  textFont(bold)
   fill(50)
-  var leftAlign = xx + 0.115*ww + 0.4*hh;
-  var rowWidth = 0.04*hh;
+  var rowWidth = 0.03*hh;
   var i = 0;
   
   if ("size" in this.data){
@@ -116,13 +128,32 @@ topAlign = yy + 0.22*hh}
   }
   
   // discriptions
-  //textFont(light)
-  discriptionLeft = xx + 0.1*ww 
+  textFont(regular)
+  discriptionLeft = leftAlign
+  discriptionTop = topAlign+(i+1)*rowWidth
   var textarray = this.data["Description"].split("\n")
-  var readytext = textarray.join('\n\n')
-  text(readytext,discriptionLeft,yy+0.53*hh,0.5*ww)
+  var readytext = textarray.join('\n')
+  text(readytext,discriptionLeft,discriptionTop,0.35*ww)
+
+
+
+  //close button
+  // stroke(50)
+  // strokeWeight(0.5)
+  // line(xx+0.8*ww,yy+0.1*hh,xx+0.8*ww+0.05*hh,yy+0.15*hh)
+  // line(xx+0.8*ww,yy+0.15*hh,xx+0.8*ww+0.05*hh,yy+0.1*hh)
+  // noStroke()
+
+
   }
   
+
+
+
+
+
+
+
   
   this.detailFrame = function(){
   var tpw=20 //tempwidth
