@@ -22,6 +22,10 @@ var light
 var lightItalic
 var regular
 var sidebarText
+var creditOn = false
+var creditcolor = new SoftFloat(240)
+var creditheight
+var creditbuttoncolor = new SoftFloat(128)
 
 
 
@@ -31,15 +35,17 @@ function preload(){
   pics[catname] = loadImage("pic/"+catname+".jpg")
   }) 
   bold = loadFont("fonts/Roboto-Bold.ttf")
+  medium = loadFont("fonts/Roboto-Medium.ttf")
   light = loadFont("fonts/Roboto-Light.ttf")
   regular = loadFont("fonts/Roboto-Regular.ttf")
   lightItalic = loadFont("fonts/Roboto-Lightitalic.ttf")
+  thin = loadFont("fonts/Roboto-Thin.ttf")
 
 }
 
 
 function setup() {
-  frameRate(125)
+  // frameRate(125)
   createCanvas(windowWidth,4.75*windowHeight)
   noStroke();
   w = windowWidth/100
@@ -125,10 +131,10 @@ drawHeadline()
 }
 
 function writeSidebarText(){
-fill(50)
+fill(30)
 textFont(regular)
 textAlign(LEFT,BOTTOM)
-textSize(1.5*h)
+textSize(1.55*h)
 sidebarText.forEach(function(textInfo){
   text(textInfo[0],textInfo[1],textInfo[2]-0.1*h)
 })
@@ -166,7 +172,9 @@ function drawCat(){
  cat.setXY(i)
  cat.show()
  i++
- })
+  })
+
+ drawCredit(tempcats.length-1)
 
  // This resizeCanvas function is too slow. How to fix this?
  
@@ -179,6 +187,28 @@ function drawCat(){
  
  //}
  }
+}
+
+function drawCredit(len){
+  textFont(lightItalic)
+  textSize(1.7*h)
+  textAlign(RIGHT,BOTTOM)
+  fill(creditbuttoncolor.value)
+  catY = map(floor(len/4),0,3,20*h,95*h)
+  var Y = max(windowHeight-5*h,catY+17*h)
+  text("Credits",94*w,Y)
+  creditheight = Y
+
+    textSize(1.6*h)
+    creditcolor.update()
+    creditbuttoncolor.update()
+    fill(creditcolor.value)
+    var readytext = "Data Source\nWolfram Alpha API\nSite Name\nJames Grady\nPicture Source\nvetstreet.com\ncat-breeds-encyclopedia.com\ncattime.com\npets4homes.com\nomlet.co.uk\npetguide.com\nburmilla.us\ncatbreedselector.com\npetpaw.com.au\nmy-pet-shop-ds.wikia.com\npurina.com\npurrfectcatbreeds.com\ngccfcats.org\ncat-breed-info.com\nlocalkittensforsale.com"
+    textAlign(RIGHT,TOP)
+    text(readytext,94*w,Y+h)
+
+  
+
 }
 
 
@@ -231,9 +261,6 @@ function sortCat(){
       }
     })
   }
-
-
-
   }
 
 
@@ -276,9 +303,29 @@ return cats
 function mouseClicked(){
  toggleButtons()
  toggleCat()
- 
+ toggleCredit()
+}
+
+function toggleCredit(){
+
+  if (mouseX<94*w && mouseX>90*w && mouseY<creditheight && mouseY >creditheight-2*h){
+    if (creditOn){
+      creditOn = false
+      creditcolor.setTarget(240)
+    }
+
+    else{
+      creditOn = true
+      creditcolor.setTarget(128)
+    }
+
+  }
+
+
 
 }
+
+
 
 function toggleCat(){
  if (detailcat!="None"){
@@ -307,6 +354,14 @@ function mouseMoved(){
   return true
   }
   })
+
+  if (mouseX<94*w && mouseX>90*w && mouseY<creditheight && mouseY >creditheight-2*h){
+
+    creditbuttoncolor.setTarget(50)
+  }else{
+    creditbuttoncolor.setTarget(128)
+  }
+
 }
 
 

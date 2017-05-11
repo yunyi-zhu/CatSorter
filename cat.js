@@ -6,6 +6,8 @@ function Cat(catname,i){
   this.data = table[catname];
   this.pic = pics[catname];
   this.bound = new SoftFloat(170,0.4,1);
+  this.colornum = new SoftFloat(255)
+
  
   this.show = function(){
     this.x.update();
@@ -48,7 +50,6 @@ function Cat(catname,i){
   this.dtY = new SoftFloat(0,0.25,1.5)
 
   this.showDetails = function(){
-    fill(255);
   this.detailFrame();
   this.detailContent();
   }
@@ -81,14 +82,12 @@ function Cat(catname,i){
     readytext = concat(readytext,", ")
   })
     readytext = readytext.slice(0,-2);
-    fill(128)
-    text(concat("Also Called: ", readytext),leftAlign, yy + 0.19*hh,0.8*ww)
-    topAlign = yy + 0.22*hh
+    fill(90)
+    text(concat("Also Called: ", readytext),leftAlign, yy + 0.19*hh)
 }
 else{
 text("Facts: ",leftAlign,yy+0.19*hh,0.8*ww)
-
-topAlign = yy + 0.22*hh}
+}
   
   //facts
 
@@ -96,6 +95,7 @@ topAlign = yy + 0.22*hh}
   fill(50)
   var rowWidth = 0.03*hh;
   var i = 0;
+  var topAlign = yy+0.22*hh
   
   if ("size" in this.data){
   var readytext = this.data['size'].join(" / ")
@@ -104,7 +104,7 @@ topAlign = yy + 0.22*hh}
   }
  
   if ("weight" in this.data){
-  var readytext = this.data['weight'].join(" to ")
+  var readytext = this.data['weight'].join(" to ") 
   text(concat(readytext," lb"),leftAlign,topAlign+i*rowWidth) 
   i++
   }
@@ -129,20 +129,106 @@ topAlign = yy + 0.22*hh}
   
   // discriptions
   textFont(regular)
-  discriptionLeft = leftAlign
-  discriptionTop = topAlign+(i+1)*rowWidth
+  descriptionLeft = leftAlign
+  descriptionTop = topAlign+(i+1)*rowWidth
+  descriptionY = descriptionTop
+  gapWidth = 0.007*hh
+  linecount=0
   var textarray = this.data["Description"].split("\n")
-  var readytext = textarray.join('\n')
-  text(readytext,discriptionLeft,discriptionTop,0.35*ww)
+  textarray.forEach(function(description){
+    text(description,descriptionLeft,descriptionY,0.40*ww)
+    if (ww>1.3*hh)
+    descriptionY += ceil(textWidth(description)/(0.39*ww))*rowWidth+gapWidth
+    else
+    descriptionY += ceil(textWidth(description)/(0.37*ww))*rowWidth+gapWidth
+  })
+
+
+  //history
+  textFont(light)
+  historyLeft = leftAlign
+  historyTop = descriptionY+0.01*hh
+  historyY = historyTop
+  gapWidth = 0.007*hh
+  linecount=0
+  var textarray = this.data["History"].split("\n")
+  textarray.forEach(function(history){
+    text(history,historyLeft,historyY,0.40*ww)
+        if (ww>1.3*hh)
+    historyY += ceil(textWidth(history)/(0.39*ww))*rowWidth+gapWidth
+    else
+    historyY += ceil(textWidth(history)/(0.37*ww))*rowWidth+gapWidth
+  })
+
+  // text(this.data["History"],historyLeft,historyY,0.40*ww)
+  fill(128)
+  textFont(lightItalic)
+  textSize(0.02*hh)
+  text("Show Details",leftAlign,historyY+gapWidth)
 
 
 
-  //close button
-  // stroke(50)
-  // strokeWeight(0.5)
-  // line(xx+0.8*ww,yy+0.1*hh,xx+0.8*ww+0.05*hh,yy+0.15*hh)
-  // line(xx+0.8*ww,yy+0.15*hh,xx+0.8*ww+0.05*hh,yy+0.1*hh)
-  // noStroke()
+
+
+  // Characteristics
+
+// if (mouseX>xx+0.07*ww && mouseX<xx+0.07*ww+0.4*hh && mouseY> yy+0.07*hh && mouseY<yy+0.07*hh+0.4*hh){
+if(mouseX>leftAlign && mouseX<leftAlign+0.15*hh && mouseY> historyY+gapWidth && mouseY<historyY+gapWidth+rowWidth){
+  this.colornum.setTarget(128)
+
+}
+else{
+this.colornum.setTarget(255)
+
+}
+
+
+  this.colornum.update()
+
+
+  textFont(light)
+  textSize(0.019*hh)
+  textAlign(CENTER,TOP)
+  wordsTop = yy + 0.51*hh
+  rightAlign = xx+0.07*ww+0.20*hh
+
+  fill(this.colornum.value)
+  text("Temperament",rightAlign,yy+0.48*hh)
+  Y = wordsTop
+  ranked = this.data['Temperament']
+  ranked.sort(function(a,b){
+    return b.length-a.length
+  })
+
+// if (ranked.length>6){
+  for (var i=1;i<ranked.length;i+=2){
+    text(concat(concat(ranked[i-1]," "),ranked[i]),rightAlign,Y)
+    Y+= rowWidth
+  }
+// }else{
+//   ranked.forEach(function(temperament){
+//     text(temperament,rightAlign,Y)
+//     Y+= rowWidth
+
+//   })
+// }
+
+
+//hometown
+
+  textFont(light)
+  rowWidth = 0.026*hh
+
+
+  text("Comes from",rightAlign,Y+0.02*hh)
+
+  text(this.data["origin"][0].replace(","," and "),rightAlign,Y+0.02*hh+rowWidth)
+
+
+  text("Recognized by",rightAlign,Y+0.08*hh+gapWidth) 
+
+  text(this.data['Recognized by'].join("\n"),rightAlign,Y+0.08*hh+gapWidth+rowWidth)
+
 
 
   }
@@ -166,6 +252,7 @@ topAlign = yy + 0.22*hh}
   this.dtVertical.update()
   this.dtX.update()
   this.dtY.update()
+  fill(255)
   rect(this.dtX.value,this.dtY.value,this.dtHorizontal.value,this.dtVertical.value)  
 }
   
